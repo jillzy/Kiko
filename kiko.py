@@ -44,26 +44,9 @@ def findStyle(mood):
     style = set(style)
     return style
 
-"""
-def convertTone(mood): #instead of using this structure to convert mood, use to determine spans
-    def aConvert(m, s, line):
-        if "caps" in s:
-            return line.upper()
-    def iConvert(m, s, line):
-        print("irrev")
-    def dConvert(m, s, line):
-        print("disb")
 
-    return {
-        'anger': aConvert,
-        'irreverent': iConvert,
-        'disbelief': dConvert
 
-    }[mood]
-
-"""
-
-"""change the ifs into a dict of the word and its typo
+"""change the ifs into a dict of the word and its typo/ should the ur stuff be slang?
 insensitive = l.lower()
 if "fuck" in insensitive:
     l = l.replace("fuck", "fcuk")
@@ -76,25 +59,40 @@ if "your" in insensitive:
 if "you" in insensitive:
     l = l.replace("you", "u")"""
 
+def randomTypo(i): #instead of using this structure to convert mood, use to determine spans
 
-def double(w): #dont replace punctuation with typo, will deal with grammar using span
-    tmp_w = ""
-    for c in w:
-        if c not in ["!", ",", '"', "'", "?", "-"]:
-            tmp_w += c
-    new_w = tmp_w
-    original = new_w[randint(0, len(new_w)-1)]
-    change = original + original
-    new_w = new_w.replace(original, change)
-    w = w.replace(tmp_w, new_w)
+    def double(w):  # dont replace punctuation with typo, will deal with grammar using span, don't double the same letter (kkikko)
+        tmp_w = ""
+        for c in w:
+            if c not in ["!", ",", '"', "'", "?", "-"]:
+                tmp_w += c
+        new_w = tmp_w
+        original = new_w[randint(0, len(new_w) - 1)]
+        change = original + original
+        new_w = new_w.replace(original, change)
+        w = w.replace(tmp_w, new_w)
 
-    return w
+        return w
+
+    def omit(w):
+        pass
+
+    def switch(w):
+        pass
+    return {
+        0: double,
+        1: double,
+        2: double
+
+    }[i]
+
 
 def makeTypo(sentence, typos):
     new = ""
     for i in range(0, typos): #can operate on same sentence twiece
         k = randint(0, len(sentence) - 1)
-        sentence[k] = double(sentence[k]) #make many, omit, double, switch etc
+        fn = randomTypo(randint(0, 2))
+        sentence[k] = fn(sentence[k])
     for word in sentence:
         new += (word + " ")
     return new
