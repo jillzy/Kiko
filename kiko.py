@@ -10,6 +10,7 @@ import re
 moods = ["disbelief", "anger", "irreverent"]
 styles = {"A": "punct", "B": "caps", "C": "spell", "D": "slang", "E": "low"} #punc into span
 
+
 def cdf(weights):
     total = sum(weights)
     result = []
@@ -18,6 +19,7 @@ def cdf(weights):
         cumsum += w
         result.append(cumsum / total)
     return result
+
 
 def choice(population, weights):
     assert len(population) == len(weights)
@@ -33,6 +35,7 @@ def returnWeights(mood):
         'anger': [0.1, 0.45, 0.3, 0.1, 0.05],
         'irreverent': [0.1, 0.1, 0.25, 0.3, 0.25],
     }[mood]
+
 
 def findStyle(mood):
     style = []
@@ -59,6 +62,7 @@ if "your" in insensitive:
 if "you" in insensitive:
     l = l.replace("you", "u")"""
 
+
 def randomTypo(i): #instead of using this structure to convert mood, use to determine spans
 
     def double(w):  # dont replace punctuation with typo, will deal with grammar using span, don't double the same letter (kkikko)
@@ -74,15 +78,41 @@ def randomTypo(i): #instead of using this structure to convert mood, use to dete
 
         return w
 
-    def omit(w):
-        pass
+    def omit(w): #omitting twice :( (hey i'm ik (kiko))
+        tmp_w = ""
+        for c in w:
+            if c not in ["!", ",", '"', "'", "?", "-"]:
+                tmp_w += c
+        new_w = tmp_w
+        original = new_w[randint(0, len(new_w) - 1)]
+        new_w = new_w.replace(original, "")
+        w = w.replace(tmp_w, new_w)
 
-    def switch(w):
-        pass
+        return w
+
+    def switch(w): #omitting twice :( (hey i'm ik (kiko))
+        tmp_w = ""
+        print("switch")
+        for c in w:
+            if c not in ["!", ",", '"', "'", "?", "-"]:
+                tmp_w += c
+        new_w = tmp_w
+        idx = randint(0, len(new_w))
+        if idx == len(new_w)-1: #last char
+            tmp_c = tmp_w[idx-1] + tmp_w[idx]
+            new_c = tmp_c[::-1]
+        else:
+            tmp_c = tmp_w[idx] + tmp_w[idx+1]
+            new_c = tmp_c[::-1]
+
+        w = w.replace(tmp_c, new_c)
+
+        return w
+
     return {
         0: double,
-        1: double,
-        2: double
+        1: omit,
+        2: switch
 
     }[i]
 
@@ -97,6 +127,7 @@ def makeTypo(sentence, typos):
         new += (word + " ")
     return new
 
+
 def determineNumberTypos():
     i = randint(0, 9)
     if 0 <= i <= 1:  # i want to weights to depend on sentence length, eventually
@@ -109,8 +140,8 @@ def determineNumberTypos():
         typos = 3
     return typos
 
+
 def convertTone(s, l):
-    new = ""
     #if "spell" in s:
     sentence = l.split()
     typos = determineNumberTypos()
