@@ -63,7 +63,7 @@ if "you" in insensitive:
     l = l.replace("you", "u")"""
 
 
-def randomTypo(i): #instead of using this structure to convert mood, use to determine spans
+def randomTypo(): #this is bad when you do multiple operations on the same word, use order control
 
     def double(w):  # dont replace punctuation with typo, will deal with grammar using span, don't double the same letter (kkikko)
         tmp_w = ""
@@ -97,38 +97,29 @@ def randomTypo(i): #instead of using this structure to convert mood, use to dete
             if c not in ["!", ",", '"', "'", "?", "-"]:
                 tmp_w += c
         new_w = tmp_w
-        idx = randint(0, len(new_w))
-        if idx == len(new_w)-1: #last char
+        idx = randint(0, len(new_w)-1)
+        print("operating on this word: "+new_w)
+        if idx is len(new_w)-1: #last char
+            print("1: first index is " + tmp_w[idx-1])
             tmp_c = tmp_w[idx-1] + tmp_w[idx]
-            new_c = tmp_c[::-1]
         else:
+            print("2: first index is " + tmp_w[idx])
             tmp_c = tmp_w[idx] + tmp_w[idx+1]
-            new_c = tmp_c[::-1]
-
+        new_c = tmp_c[::-1] #reverse
         w = w.replace(tmp_c, new_c)
 
         return w
 
-    return {
-        0: double,
-        1: omit,
+    fns = {
+        0: omit,
+        1: double,
         2: switch
-
-    }[i]
-
-
-def makeTypo(sentence, typos):
-    new = ""
-    for i in range(0, typos): #can operate on same sentence twiece
-        k = randint(0, len(sentence) - 1)
-        fn = randomTypo(randint(0, 2))
-        sentence[k] = fn(sentence[k])
-    for word in sentence:
-        new += (word + " ")
-    return new
+    }
+    i = randint(0, len(fns)-1)
+    return fns[i]
 
 
-def determineNumberTypos():
+def determineTypos(sentence):
     i = randint(0, 9)
     if 0 <= i <= 1:  # i want to weights to depend on sentence length, eventually
         typos = 0
@@ -138,14 +129,21 @@ def determineNumberTypos():
         typos = 2
     elif i == 9:
         typos = 3
-    return typos
+
+    new = ""
+    for i in range(0, typos): #can operate on same sentence twiece
+        k = randint(0, len(sentence) - 1)
+        fn = randomTypo()
+        sentence[k] = fn(sentence[k])
+    for word in sentence:
+        new += (word + " ")
+    return new
 
 
 def convertTone(s, l):
     #if "spell" in s:
     sentence = l.split()
-    typos = determineNumberTypos()
-    l = makeTypo(sentence, typos)
+    l = determineTypos(sentence)
     if "caps" in s:
         l = l.upper()
     elif "low" in s:
