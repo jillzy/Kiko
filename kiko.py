@@ -66,53 +66,73 @@ if "you" in insensitive:
 def randomTypo(): #this is bad when you do multiple operations on the same word, use order control
 
     def double(w):  # dont replace punctuation with typo, will deal with grammar using span, don't double the same letter (kkikko)
-        tmp_w = ""
+        print("double")
+        chars = [] #!!! replace the original word string (not char array) with new_w to retain grammar
+        new = ""
+        tmp = ""
         for c in w:
             if c not in ["!", ",", '"', "'", "?", "-"]:
-                tmp_w += c
-        new_w = tmp_w
-        original = new_w[randint(0, len(new_w) - 1)]
-        change = original + original
-        new_w = new_w.replace(original, change)
-        w = w.replace(tmp_w, new_w)
-
+                tmp += c
+                chars.append(c)
+        idx = randint(0, len(chars) - 1)
+        letter = chars[idx]
+        letter += letter
+        chars[idx] = letter
+        for c in chars:
+            new += c
+        w = w.replace(tmp, new)
         return w
 
     def omit(w): #omitting twice :( (hey i'm ik (kiko))
-        tmp_w = ""
-        for c in w:
-            if c not in ["!", ",", '"', "'", "?", "-"]:
-                tmp_w += c
-        new_w = tmp_w
-        original = new_w[randint(0, len(new_w) - 1)]
-        new_w = new_w.replace(original, "")
-        w = w.replace(tmp_w, new_w)
-
+        print("omit")
+        if len(w) > 4:
+            chars = []
+            tmp = ""
+            new = ""
+            for c in w:
+                if c not in ["!", ",", '"', "'", "?", "-"]:
+                    tmp += c
+                    chars.append(c)
+            chars[randint(0, len(chars) - 1)] = ""
+            for c in chars:
+                new += c
+            w = w.replace(tmp, new)
+            return w
         return w
 
     def switch(w): #omitting twice :( (hey i'm ik (kiko))
-        tmp_w = ""
         print("switch")
-        for c in w:
-            if c not in ["!", ",", '"', "'", "?", "-"]:
-                tmp_w += c
-        new_w = tmp_w
-        idx = randint(0, len(new_w)-1)
-        print("operating on this word: "+new_w)
-        if idx is len(new_w)-1: #last char
-            print("1: first index is " + tmp_w[idx-1])
-            tmp_c = tmp_w[idx-1] + tmp_w[idx]
-        else:
-            print("2: first index is " + tmp_w[idx])
-            tmp_c = tmp_w[idx] + tmp_w[idx+1]
-        new_c = tmp_c[::-1] #reverse
-        w = w.replace(tmp_c, new_c)
+        if len(w) > 3:
+            tmp_w = ""
+            new_w = ""
+            chars = []
+            for c in w:
+                if c not in ["!", ",", '"', "'", "?", "-"]:
+                    tmp_w += c
+                    chars.append(c)
+            idx = randint(1, len(tmp_w)-2)
+            if idx is len(tmp_w)-2: #2nd last char
+                t = chars[idx-1]
+                chars[idx-1] = chars[idx]
+                chars[idx] = t
+            else:
+                t = chars[idx]
+                chars[idx] = chars[idx+1]
+                chars[idx+1] = t
+            for c in chars:
+                new_w += c
+            w = w.replace(tmp_w, new_w) #you awnna tighf, do you awtn to fight
+            print(chars)
+            print("new: " + new_w)
+            print("old: " + tmp_w)
+            print("replacement: " + w)
 
+            return w
         return w
 
     fns = {
-        0: omit,
-        1: double,
+        0: switch,
+        1: switch,
         2: switch
     }
     i = randint(0, len(fns)-1)
