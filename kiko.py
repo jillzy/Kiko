@@ -77,15 +77,27 @@ if "you" in insensitive:
     l = l.replace("you", "u")"""
 
 
-def makeTypo(w):
-    tmp = ""
-    new = ""
+def double(w): #dont replace punctuation with typo, will deal with grammar using span
+    tmp_w = ""
     for c in w:
         if c not in ["!", ",", '"', "'", "?", "-"]:
-            tmp += c
-    new = tmp[::-1]
-    w = w.replace(tmp, new)
+            tmp_w += c
+    new_w = tmp_w
+    original = new_w[randint(0, len(new_w)-1)]
+    change = original + original
+    new_w = new_w.replace(original, change)
+    w = w.replace(tmp_w, new_w)
+
     return w
+
+def makeTypo(sentence, typos):
+    new = ""
+    for i in range(0, typos): #can operate on same sentence twiece
+        k = randint(0, len(sentence) - 1)
+        sentence[k] = double(sentence[k]) #make many, omit, double, switch etc
+    for word in sentence:
+        new += (word + " ")
+    return new
 
 def determineNumberTypos():
     i = randint(0, 9)
@@ -101,17 +113,10 @@ def determineNumberTypos():
 
 def convertTone(s, l):
     new = ""
-    if "spell" in s:
-        #words = re.sub("[^\w]", " ", l).split() #split by " ", should count ' and ,  [^\w]
-        words = l.split()
-        typos = determineNumberTypos()
-        for i in range(0, typos): #dont replace punctuation with typo, will deal with grammar using span
-            k = randint(0,len(words)-1)
-            words[k] = makeTypo(words[k])
-            #words[k] = "typo"
-        for word in words:
-            new += (word + " ")
-        l = new
+    #if "spell" in s:
+    sentence = l.split()
+    typos = determineNumberTypos()
+    l = makeTypo(sentence, typos)
     if "caps" in s:
         l = l.upper()
     elif "low" in s:
